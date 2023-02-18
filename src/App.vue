@@ -1,23 +1,38 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from "vue";
+import BookCard from "./components/BookCard.vue";
+import { api } from "./api/google_book_api";
+import type { BookList, VolumeInfo } from "./types";
+
+const searchText = ref("");
+const bookList = ref<BookList[]>();
+
+const searchBooks = () => {
+  if(searchText.value !== "") {
+  api
+    .get(searchText.value)
+    .then((res) => {
+      bookList.value = res.data.items;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+};
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+  
+  <form @submit.prevent="searchBooks">
+    <input type="text" v-model="searchText" required/>
+    <button @click="searchBooks" @keyup.enter="searchBooks">Search</button>
+    <div v-if="bookList">
+      <div v-for="item in bookList" :key="item.id">    
+          <BookCard :book="item"/>
+   
+      </div>
     </div>
-  </header>
-
-  <RouterView />
+  </form>
 </template>
 
 <style scoped>
