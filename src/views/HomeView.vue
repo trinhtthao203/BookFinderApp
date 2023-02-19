@@ -75,7 +75,7 @@ onMounted(() => {
         <n-grid-item
           v-for="book in BookList"
           :key="book.id"
-          style="display: flex; justify-content: center"
+          style="display: flex; justify-content: center; margin-bottom: 20px"
         >
           <BookCard :book="book" />
         </n-grid-item>
