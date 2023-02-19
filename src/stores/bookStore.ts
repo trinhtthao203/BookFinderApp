@@ -1,11 +1,11 @@
-import type { Book } from "@/types";
+import type { BookList } from "@/types";
 import { defineStore } from "pinia";
-
+import { api } from "@/api/google_book_api";
 type StateShape = {
-  list: Book[];
+  list: BookList[];
 };
 
-export const useBookStore = defineStore("Book", {
+export const useBookStore = defineStore("BookList", {
   state: (): StateShape => ({
     list: [
       // {
@@ -44,6 +44,9 @@ export const useBookStore = defineStore("Book", {
     ],
   }),
   actions: {
-
+    //getBookList(searchText: string) {
+    //   const value = api.get(searchText)
+    //   return
+    // }
   }
 });
