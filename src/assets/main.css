@@ -1,11 +1,11 @@
-@import './base.css';
+@import "./base.css";
 
 #app {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
-  padding: 2rem;
-
+  /* padding: 2rem; */
   font-weight: normal;
+  background-color: rgba(127, 143, 166, 0.2);
 }
 
 a,
@@ -23,13 +23,16 @@ a,
 
 @media (min-width: 1024px) {
   body {
-    display: flex;
-    place-items: center;
+    /* display: flex; */
+    /* align-items: center; */
   }
 
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    text-align: center;
+    /* margin: 60px; */
+    margin: 0 auto;
+    /* display: grid; */
+    /* grid-template-columns: 1fr 1fr; */
+    /* padding: 0 2rem; */
   }
 }
