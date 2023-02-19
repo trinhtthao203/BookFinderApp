@@ -69,6 +69,7 @@ onMounted(() => {
               type="text"
               class="input"
               v-model:value="searchName"
+              placeholder="Type author, bookname,.."
               :style="{ width: '100%' }"
               :keyup="onChangeText"
               ref="elSearchName"
@@ -85,7 +86,7 @@ onMounted(() => {
           </n-input-group>
           <div>
             <p
-              style="color: #d63031; font-size: 15px; font-weight: bold"
+              style="color: #d63031; font-size: 14px; font-weight: 600"
               v-show="errorInput"
             >
               Please fill search input !!!
@@ -178,6 +179,6 @@ onMounted(() => {
 #text-not-found {
   font-size: 20px;
   color: #3161f1;
-  font-weight: bold;
+  font-weight: 400;
 }
 </style>
