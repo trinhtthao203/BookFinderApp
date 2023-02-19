@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import {
   NGrid,
   NGridItem,
@@ -9,43 +8,31 @@ import {
   NInputGroup,
 } from "naive-ui";
 import { ref, onMounted } from "vue";
-import { useBookStore } from "@/stores/bookStore";
 import BookCard from "@/components/BookCard.vue";
-import axios from "axios";
-import type { Book } from "@/types";
+import { api } from "@/api/google_book_api";
+import type { BookList, VolumeInfo } from "@/types";
 
 const searchName = ref("");
 const isLoading = ref(false);
 
-const BookStore = useBookStore();
-const BookList = BookStore.list;
+const BookList = ref<BookList[]>();
 const elSearchName = ref<HTMLInputElement | null>(null);
 
 const onChangeText = (event: InputEvent) => {
-  console.log(event);
   searchName.value = (event.target as HTMLInputElement).value;
 };
 
-const handleSearchBook = async (payload: string) => {
-  const booksResponse = await axios.get(
-    `https://www.googleapis.com/books/v1/volumes?q=${payload}`
-  );
-  BookList.values = booksResponse.data.items.map((item: any) => {
-    return {
-      id: item.id,
-      title: item.volumeInfo.title,
-      author: item.volumeInfo.authors,
-      publisher: item.volumeInfo.publisher,
-      pushlished: item.volumeInfo.publishedDate,
-      imageLink: item.volumeInfo.imageLinks.thumbnail,
-      bookLink: item.volumeInfo.infoLink,
-    };
-  });
-  // BookList.values.push(
-  //   newArray.map((item: Book) => {
-  //     return item;
-  //   })
-  // );
+const searchBooks = () => {
+  if (searchName.value !== "") {
+    api
+      .get(searchName.value)
+      .then((res) => {
+        BookList.value = res.data.items;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 };
 
 onMounted(() => {
@@ -69,8 +56,13 @@ onMounted(() => {
               :style="{ width: '100%' }"
               :keyup="onChangeText"
               ref="elSearchName"
+              aria-required="true"
             />
-            <n-button type="info" @click="handleSearchBook(searchName)">
+            <n-button
+              type="info"
+              @click="searchBooks"
+              @keyup.enter="searchBooks"
+            >
               Search
             </n-button>
           </n-input-group>
@@ -85,14 +77,7 @@ onMounted(() => {
           :key="book.id"
           style="display: flex; justify-content: center"
         >
-          <BookCard
-            :title="book.title"
-            :image-link="book.imageLink"
-            :author="book.author"
-            :publisher="book.publisher"
-            :pushlished="book.pushlished"
-            :book-link="book.bookLink"
-          />
+          <BookCard :book="book" />
         </n-grid-item>
       </n-grid>
     </n-grid-item>
@@ -123,12 +108,5 @@ onMounted(() => {
 #input-grp {
   position: absolute;
   top: 280px;
-}
-
-#book-card {
-  width: 500;
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
 }
 </style>
