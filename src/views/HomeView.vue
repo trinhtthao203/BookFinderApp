@@ -6,6 +6,8 @@ import {
   NImage,
   NButton,
   NInputGroup,
+  NSpace,
+  NSkeleton,
 } from "naive-ui";
 import { ref, onMounted } from "vue";
 import BookCard from "@/components/BookCard.vue";
@@ -23,16 +25,20 @@ const onChangeText = (event: InputEvent) => {
 };
 
 const searchBooks = () => {
-  if (searchName.value !== "") {
-    api
-      .get(searchName.value)
-      .then((res) => {
-        BookList.value = res.data.items;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  isLoading.value = true;
+  setTimeout(() => {
+    if (searchName.value !== "") {
+      api
+        .get(searchName.value)
+        .then((res) => {
+          BookList.value = res.data.items;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      isLoading.value = false;
+    }
+  }, 2500);
 };
 
 onMounted(() => {
@@ -69,8 +75,15 @@ onMounted(() => {
         </div>
       </div>
     </n-grid-item>
-    <n-grid-item> </n-grid-item>
-    <n-grid-item>
+    <n-grid-item v-if="isLoading" cols="1" responsive="screen">
+      <n-space vertical id="loading-container">
+        <n-skeleton height="40px" width="33%" />
+        <n-skeleton height="40px" width="66%" :sharp="false" />
+        <n-skeleton height="40px" round />
+        <n-skeleton height="40px" circle />
+      </n-space>
+    </n-grid-item>
+    <n-grid-item v-else="isLoading">
       <n-grid cols="1 s:1 m:2 l:2 xl:2 2xl:2" responsive="screen">
         <n-grid-item
           v-for="book in BookList"
@@ -108,5 +121,9 @@ onMounted(() => {
 #input-grp {
   position: absolute;
   top: 280px;
+}
+
+#loading-container {
+  height: 100%;
 }
 </style>

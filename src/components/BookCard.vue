@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { BookList } from "../types";
 import { NCard, NA } from "naive-ui";
-
 type PropTypes = {
   book: BookList;
 };
@@ -10,10 +9,23 @@ defineProps<PropTypes>();
 
 <template>
   <n-card hoverable>
-    <h3 id="title-card">{{ book.volumeInfo?.title }}</h3>
+    <h2 id="title-card">{{ book.volumeInfo?.title }}</h2>
     <template style="display: flex; flex-direction: row">
       <n-a :href="book.volumeInfo?.infoLink">
-        <img id="img-card" :src="book.volumeInfo?.imageLinks?.thumbnail" />
+        <div v-if="book.volumeInfo?.imageLinks?.thumbnail">
+          <img
+            class="img-card"
+            style="width: 120px"
+            :src="book.volumeInfo?.imageLinks?.thumbnail"
+          />
+        </div>
+        <div v-else>
+          <img
+            class="img-card"
+            style="width: 120px"
+            src="../../public/images/savanisbookshop.jpeg"
+          />
+        </div>
       </n-a>
       <div id="container-content">
         <p class="content-card">
@@ -35,7 +47,7 @@ defineProps<PropTypes>();
 
 <style scoped>
 .n-a {
-  width: 30%;
+  /* width: 20%; */
 }
 .n-card {
   height: 100%;
@@ -45,6 +57,7 @@ defineProps<PropTypes>();
 }
 .content-card {
   width: 100%;
+  font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -53,27 +66,23 @@ defineProps<PropTypes>();
   color: #34495e;
 }
 
-#img-card {
-  width: 80%;
-  height: auto;
+.img-card {
   border: 1px solid #bdc3c7;
   box-shadow: 5px 10px #888888;
 }
 
 #title-card {
   width: 100%;
+  font-weight: 600;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 1; /* number of lines to show */
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  font-weight: 600;
   color: #c0392b;
   padding-bottom: 10px;
 }
 
 #container-content {
   padding-left: 30px;
+  width: 70%;
 }
 </style>
