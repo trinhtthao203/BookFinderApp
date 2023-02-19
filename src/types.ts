@@ -9,24 +9,6 @@ export type BookList = {
   searchInfo?: string,
 }
 
-// export interface AccessInfo {
-//   country:                Country;
-//   viewability:            Viewability;
-//   embeddable:             boolean;
-//   publicDomain:           boolean;
-//   textToSpeechPermission: TextToSpeechPermission;
-//   epub:                   Epub;
-//   pdf:                    Epub;
-//   webReaderLink:          string;
-//   accessViewStatus:       AccessViewStatus;
-//   quoteSharingAllowed:    boolean;
-// }
-
-
-// export interface SearchInfo {
-//   textSnippet: string;
-// }
-
 export type VolumeInfo = {
   title:               string;
   authors:             string;
