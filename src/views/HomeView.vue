@@ -7,15 +7,16 @@ import {
   NButton,
   NInputGroup,
   NSpace,
-  NSkeleton,
 } from "naive-ui";
 import { ref, onMounted } from "vue";
 import BookCard from "@/components/BookCard.vue";
+import Loading from "@/components/Loading.vue";
 import { api } from "@/api/google_book_api";
 import type { BookList, VolumeInfo } from "@/types";
 
 const searchName = ref("");
 const isLoading = ref(false);
+const errorInput = ref(false);
 
 const BookList = ref<BookList[]>();
 const elSearchName = ref<HTMLInputElement | null>(null);
@@ -25,20 +26,27 @@ const onChangeText = (event: InputEvent) => {
 };
 
 const searchBooks = () => {
-  isLoading.value = true;
-  setTimeout(() => {
-    if (searchName.value !== "") {
-      api
-        .get(searchName.value)
-        .then((res) => {
-          BookList.value = res.data.items;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      isLoading.value = false;
-    }
-  }, 2500);
+  BookList.value = [];
+  if (!searchName.value) {
+    errorInput.value = true;
+  } else {
+    errorInput.value = false;
+    isLoading.value = true;
+    setTimeout(() => {
+      if (searchName.value) {
+        api
+          .get(searchName.value)
+          .then((res) => {
+            BookList.value = res.data.items;
+            isLoading.value = false;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        errorInput.value = false;
+      }
+    }, 2000);
+  }
 };
 
 onMounted(() => {
@@ -52,9 +60,7 @@ onMounted(() => {
       <div id="show_bg_2">
         <n-image width="250" src="../../public/images/logo.png" />
         <div id="input-grp">
-          <n-input-group
-            style="display: flex; justify-content: center; padding-bottom: 20px"
-          >
+          <n-input-group style="display: flex; justify-content: center">
             <n-input
               type="text"
               class="input"
@@ -62,7 +68,8 @@ onMounted(() => {
               :style="{ width: '100%' }"
               :keyup="onChangeText"
               ref="elSearchName"
-              aria-required="true"
+              :status="errorInput ? `error` : `success`"
+              clearable
             />
             <n-button
               type="info"
@@ -72,25 +79,59 @@ onMounted(() => {
               Search
             </n-button>
           </n-input-group>
+          <div>
+            <p
+              style="color: #d63031; font-size: 15px; font-weight: bold"
+              v-show="errorInput"
+            >
+              Please fill search input !!!
+            </p>
+          </div>
         </div>
       </div>
     </n-grid-item>
-    <n-grid-item v-if="isLoading" cols="1" responsive="screen">
-      <n-space vertical id="loading-container">
-        <n-skeleton height="40px" width="33%" />
-        <n-skeleton height="40px" width="66%" :sharp="false" />
-        <n-skeleton height="40px" round />
-        <n-skeleton height="40px" circle />
-      </n-space>
-    </n-grid-item>
-    <n-grid-item v-else="isLoading">
-      <n-grid cols="1 s:1 m:2 l:2 xl:2 2xl:2" responsive="screen">
+    <n-grid-item>
+      <n-grid
+        cols="1 s:1 m:2 l:2 xl:2 2xl:2"
+        responsive="screen"
+        v-if="BookList"
+      >
         <n-grid-item
+          v-if="isLoading"
+          v-for="num in 6"
+          style="display: flex; justify-content: center; margin-bottom: 20px"
+        >
+          <Loading />
+        </n-grid-item>
+        <n-grid-item
+          v-else="isLoading"
+          v-if="BookList"
           v-for="book in BookList"
           :key="book.id"
           style="display: flex; justify-content: center; margin-bottom: 20px"
         >
           <BookCard :book="book" />
+        </n-grid-item>
+      </n-grid>
+      <n-grid
+        v-else="BookList"
+        cols="1 s:1 m:1 l:1 xl:1 2xl:1"
+        responsive="screen"
+      >
+        <n-grid-item
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+          "
+        >
+          <img
+            style="width: 200px"
+            src="../../public/images/73061-search-not-found.gif"
+            alt="Loading"
+          />
+          <p>Nothing to show !!!</p>
         </n-grid-item>
       </n-grid>
     </n-grid-item>
@@ -109,10 +150,9 @@ onMounted(() => {
     url("../../public/images/pexels-davyd-bortnik-3132530.jpg");
   background-position: center;
   width: 100%;
-  height: 340px;
+  height: 300px;
   background-size: cover;
   color: white;
-  padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -120,10 +160,13 @@ onMounted(() => {
 }
 #input-grp {
   position: absolute;
-  top: 280px;
+  top: 240px;
 }
 
 #loading-container {
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
