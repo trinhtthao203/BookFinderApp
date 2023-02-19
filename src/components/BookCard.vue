@@ -50,6 +50,7 @@ defineProps<PropTypes>();
   /* width: 20%; */
 }
 .n-card {
+  margin-top: 20px;
   height: 100%;
   width: 80%;
   border-radius: 10px;

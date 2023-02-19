@@ -17,6 +17,7 @@ import type { BookList, VolumeInfo } from "@/types";
 const searchName = ref("");
 const isLoading = ref(false);
 const errorInput = ref(false);
+const notFound = ref(false);
 
 const BookList = ref<BookList[]>();
 const elSearchName = ref<HTMLInputElement | null>(null);
@@ -27,6 +28,7 @@ const onChangeText = (event: InputEvent) => {
 
 const searchBooks = () => {
   BookList.value = [];
+  notFound.value = false;
   if (!searchName.value) {
     errorInput.value = true;
   } else {
@@ -39,6 +41,8 @@ const searchBooks = () => {
           .then((res) => {
             BookList.value = res.data.items;
             isLoading.value = false;
+            if (!BookList.value) notFound.value = true;
+            else notFound.value = false;
           })
           .catch((err) => {
             console.log(err);
@@ -114,7 +118,7 @@ onMounted(() => {
         </n-grid-item>
       </n-grid>
       <n-grid
-        v-else="BookList"
+        v-if="notFound"
         cols="1 s:1 m:1 l:1 xl:1 2xl:1"
         responsive="screen"
       >
@@ -122,6 +126,7 @@ onMounted(() => {
           style="
             display: flex;
             justify-content: center;
+            flex-direction: column;
             align-items: center;
             background-color: white;
           "
@@ -131,7 +136,7 @@ onMounted(() => {
             src="../../public/images/73061-search-not-found.gif"
             alt="Loading"
           />
-          <p>Nothing to show !!!</p>
+          <p id="text-not-found">Nothing to show !!!</p>
         </n-grid-item>
       </n-grid>
     </n-grid-item>
@@ -156,7 +161,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  padding-bottom: 20px;
 }
 #input-grp {
   position: absolute;
@@ -168,5 +173,11 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#text-not-found {
+  font-size: 20px;
+  color: #3161f1;
+  font-weight: bold;
 }
 </style>
