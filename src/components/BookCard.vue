@@ -11,7 +11,7 @@ defineProps<PropTypes>();
   <n-card hoverable>
     <h2 id="title-card">{{ book.volumeInfo?.title }}</h2>
     <template style="display: flex; flex-direction: row">
-      <n-a :href="book.volumeInfo?.infoLink">
+      <n-a :href="book.volumeInfo?.infoLink" target="_blank">
         <div v-if="book.volumeInfo?.imageLinks?.thumbnail">
           <img
             class="img-card"
