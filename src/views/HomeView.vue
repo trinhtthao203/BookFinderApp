@@ -71,18 +71,12 @@ onMounted(() => {
               v-model:value="searchName"
               placeholder="Type author, bookname,.."
               :style="{ width: '100%' }"
-              :keyup="onChangeText"
+              @keyup.enter="searchBooks"
               ref="elSearchName"
               :status="errorInput ? `error` : `success`"
               clearable
             />
-            <n-button
-              type="info"
-              @click="searchBooks"
-              @keyup.enter="searchBooks"
-            >
-              Search
-            </n-button>
+            <n-button type="info" @click="searchBooks"> Search </n-button>
           </n-input-group>
           <div>
             <p
